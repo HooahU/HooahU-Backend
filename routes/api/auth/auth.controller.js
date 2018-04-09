@@ -6,18 +6,18 @@ const conn = mysql.createConnection(config);
 
 exports.register = (req, res) => {
 	const secret = req.app.get('jwt-secret');
-	const { username, email, password, profile_img, github, bio } = req.body;
+	const { first_name, last_name, nickname, email, password, type, c_type, w_type, camp, area, reason } = req.body;
 	const d = new Date();
 	d.setUTCHours(d.getUTCHours());
 	const encrypted = crypto.createHmac('sha1', config.secret)
 		.update(password)
 		.digest('base64');
-	conn.query('SELECT * from Users WHERE email=? or username=?', [email, username], (err, rows) => {
+	conn.query('SELECT * from Users WHERE email=?', [email], (err, rows) => {
 		if (err) throw err;
 		if (rows.length == 0) {
 			conn.query(
-				'INSERT INTO Users(username, password, email, profile_img, github, bio, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-				[username, encrypted, email, profile_img, github, bio, d],
+				'INSERT INTO Users(first_name, last_name, nickname, email, password, type, c_type, w_type, camp, area, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+				[first_name, last_name, nickname, email, encrypted, type, c_type, w_type, camp, area, reason],
 				(err, result) => {
 					if (err) throw err;
 					console.log(result);
